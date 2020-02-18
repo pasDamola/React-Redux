@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import logo from './logo.svg';
 import './App.css';
 
@@ -43,7 +43,7 @@ class Board extends React.Component {
   }
 }
 
-class Game extends React.Component {
+class GMameame extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -123,6 +123,25 @@ class Game extends React.Component {
   }
 }
 
+export default function Game(){
+ const [history, setHistory] = useState([{squares: Array(9).fill(null)}])
+ const [stepNumber, setStepNumber] = useState(0);
+ const [xIsNext, setXIsNext] = useState(0);
+
+ function handleClick(i) {
+  const history = history.slice(0, stepNumber + 1);
+  const current = history[history.length - 1];
+  const squares = current.squares.slice();
+  if (calculateWinner(squares) || squares[i]) {
+    return;
+  }
+  squares[i] = xIsNext ? "X" : "O";
+  setHistory(history.concat([{squares : squares}]));
+  setStepNumber(history.length);
+  setXIsNext(!xIsNext);
+  }
+}
+
 function calculateWinner(squares) {
   const lines = [
     [0, 1, 2],
@@ -144,4 +163,4 @@ function calculateWinner(squares) {
 }
 
 
-export default Game;
+//export default Game;
