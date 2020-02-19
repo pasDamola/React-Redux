@@ -10,8 +10,8 @@ function Square(props) {
   );
 }
 
-function Board(){
-  
+function Board(props){
+
   function renderSquare(i){
     return (
       <Square
