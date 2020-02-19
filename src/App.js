@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import props from 'prop-types';
+//import props from 'prop-types';
 import './App.css';
 
 function Square(props) {
@@ -47,18 +47,19 @@ function Board(props){
 export default function Game(){
  const [history, setHistory] = useState([{squares: Array(9).fill(null)}])
  const [stepNumber, setStepNumber] = useState(0);
- const [xIsNext, setXIsNext] = useState(0);
+ const [xIsNext, setXIsNext] = useState(true);
 
  function handleClick(i) {
-    history.slice(0, stepNumber + 1);
-    const current = history[history.length - 1];
+    const hist1 = history.slice(0, stepNumber + 1);
+    console.log(history);
+    const current = hist1[hist1.length - 1];
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
     squares[i] = xIsNext ? "X" : "O";
-    setHistory(history.concat([{squares : squares}]));
-    setStepNumber(history.length);
+    setHistory(hist1.concat([{squares : squares}]));
+    setStepNumber(hist1.length);
     setXIsNext(!xIsNext);
   }
 
@@ -72,14 +73,14 @@ export default function Game(){
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
-      const desc = move ?
-        'Go to move #' + move :
-        'Go to game start';
+      const desc = move ? 'Go to move #' + move : 'Go to game start';
+
       return (
         <li key={move}>
           <button onClick={() => jumpTo(move)}>{desc}</button>
         </li>
       );
+
     });
 
     let status;
