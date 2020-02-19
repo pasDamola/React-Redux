@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
+import React, { useState } from 'react';
+import props from 'prop-types';
 import './App.css';
 
 function Square(props) {
@@ -10,82 +10,65 @@ function Square(props) {
   );
 }
 
-class Board extends React.Component {
-  renderSquare(i) {
+function Board(){
+  
+  function renderSquare(i){
     return (
       <Square
-        value={this.props.squares[i]}
-        onClick={() => this.props.onClick(i)}
+        value={props.squares[i]}
+        onClick={() => props.onClick(i)}
       />
-    );
+     )
   }
-
-  render() {
-    return (
+    return(
       <div>
         <div className="board-row">
-          {this.renderSquare(0)}
-          {this.renderSquare(1)}
-          {this.renderSquare(2)}
+          {renderSquare(0)}
+          {renderSquare(1)}
+          {renderSquare(2)}
         </div>
         <div className="board-row">
-          {this.renderSquare(3)}
-          {this.renderSquare(4)}
-          {this.renderSquare(5)}
+          {renderSquare(3)}
+          {renderSquare(4)}
+          {renderSquare(5)}
         </div>
         <div className="board-row">
-          {this.renderSquare(6)}
-          {this.renderSquare(7)}
-          {this.renderSquare(8)}
+          {renderSquare(6)}
+          {renderSquare(7)}
+          {renderSquare(8)}
         </div>
       </div>
     );
-  }
+  
 }
 
-class GMameame extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      history: [
-        {
-          squares: Array(9).fill(null)
-        }
-      ],
-      stepNumber: 0,
-      xIsNext: true
-    };
-  }
 
-  handleClick(i) {
-    const history = this.state.history.slice(0, this.state.stepNumber + 1);
+
+export default function Game(){
+ const [history, setHistory] = useState([{squares: Array(9).fill(null)}])
+ const [stepNumber, setStepNumber] = useState(0);
+ const [xIsNext, setXIsNext] = useState(0);
+
+ function handleClick(i) {
+    history.slice(0, stepNumber + 1);
     const current = history[history.length - 1];
     const squares = current.squares.slice();
     if (calculateWinner(squares) || squares[i]) {
       return;
     }
-    squares[i] = this.state.xIsNext ? "X" : "O";
-    this.setState({
-      history: history.concat([
-        {
-          squares: squares
-        }
-      ]),
-      stepNumber: history.length,
-      xIsNext: !this.state.xIsNext
-    });
+    squares[i] = xIsNext ? "X" : "O";
+    setHistory(history.concat([{squares : squares}]));
+    setStepNumber(history.length);
+    setXIsNext(!xIsNext);
   }
 
-  jumpTo(step) {
-    this.setState({
-      stepNumber: step,
-      xIsNext: (step % 2) === 0
-    });
+  function jumpTo(step) {
+    setStepNumber(step);
+    setXIsNext((step % 2) === 0);
   }
 
-  render() {
-    const history = this.state.history;
-    const current = history[this.state.stepNumber];
+  
+    const current = history[stepNumber];
     const winner = calculateWinner(current.squares);
 
     const moves = history.map((step, move) => {
@@ -94,7 +77,7 @@ class GMameame extends React.Component {
         'Go to game start';
       return (
         <li key={move}>
-          <button onClick={() => this.jumpTo(move)}>{desc}</button>
+          <button onClick={() => jumpTo(move)}>{desc}</button>
         </li>
       );
     });
@@ -103,7 +86,7 @@ class GMameame extends React.Component {
     if (winner) {
       status = "Winner: " + winner;
     } else {
-      status = "Next player: " + (this.state.xIsNext ? "X" : "O");
+      status = "Next player: " + (xIsNext ? "X" : "O");
     }
 
     return (
@@ -111,7 +94,7 @@ class GMameame extends React.Component {
         <div className="game-board">
           <Board
             squares={current.squares}
-            onClick={i => this.handleClick(i)}
+            onClick={i => handleClick(i)}
           />
         </div>
         <div className="game-info">
@@ -120,26 +103,7 @@ class GMameame extends React.Component {
         </div>
       </div>
     );
-  }
-}
-
-export default function Game(){
- const [history, setHistory] = useState([{squares: Array(9).fill(null)}])
- const [stepNumber, setStepNumber] = useState(0);
- const [xIsNext, setXIsNext] = useState(0);
-
- function handleClick(i) {
-  const history = history.slice(0, stepNumber + 1);
-  const current = history[history.length - 1];
-  const squares = current.squares.slice();
-  if (calculateWinner(squares) || squares[i]) {
-    return;
-  }
-  squares[i] = xIsNext ? "X" : "O";
-  setHistory(history.concat([{squares : squares}]));
-  setStepNumber(history.length);
-  setXIsNext(!xIsNext);
-  }
+  
 }
 
 function calculateWinner(squares) {
